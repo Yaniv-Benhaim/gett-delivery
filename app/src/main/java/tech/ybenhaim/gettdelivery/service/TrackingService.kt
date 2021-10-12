@@ -148,7 +148,7 @@ class TrackingService : LifecycleService() {
                         )
                         lifecycleScope.launch {
                             locationDao.insertLocation(currentLocation)
-                            Timber.tag("LOCUPDATES").d( "location from service: ${location.latitude}")
+                           // Timber.tag("LOCUPDATES").d( "location from service: ${location.latitude}")
                         }
                     }
                 }

@@ -66,17 +66,9 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun getDirections() = viewModelScope.launch {
-
-        repository.getDirections(
+    suspend fun getDirections() = repository.getDirections(
             "${currentLocation.value.latitude},${currentLocation.value.longitude}",
-            currentTask.value.geo.address
-        ).collect { routes ->
-            routes?.let {
-                directions.value = it
-                Log.d("MAPURL", "collecting directions")
-            }
-        }
+            currentTask.value.geo.address)
     }
 
     fun updateCurrentLocation(newLocation: Location) {
@@ -87,8 +79,8 @@ class MainViewModel @Inject constructor(
                 bearing = newLocation.bearing,
                 speed = newLocation.speed
             )
-            currentLocation.value = updatedLocation
-            currentLocationL.value = updatedLocation
+            //currentLocation.value = updatedLocation
+            //currentLocationL.value = updatedLocation
         } else {
             val updatedLocation = MyLocation(
                 latitude = 32.07882010000863,
@@ -96,16 +88,15 @@ class MainViewModel @Inject constructor(
                 bearing = newLocation.bearing,
                 speed = newLocation.speed
             )
-            currentLocation.value = updatedLocation
+            //currentLocation.value = updatedLocation
         }
     }
 
-    fun updateCurrentRotation(azimuth: Float) {
-        currentAzimuth.value = azimuth
-    }
+//    fun updateCurrentRotation(azimuth: Float) {
+//        //currentAzimuth.value = azimuth
+//    }
 
-    fun currentRotation() = channelFlow {
-        send(currentAzimuth.value)
-    }
+//    fun currentRotation() = channelFlow {
+//        //send(currentAzimuth.value)
+//    }
 
-}

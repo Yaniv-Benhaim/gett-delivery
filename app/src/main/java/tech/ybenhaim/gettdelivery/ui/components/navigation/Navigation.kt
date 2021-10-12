@@ -17,7 +17,7 @@ import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 @ExperimentalCoroutinesApi
 @Composable
 fun Navigation(navController: NavHostController, viewModel: MainViewModel) {
-    NavHost(navController = navController, startDestination = "home" ) {
+    NavHost(navController = navController, startDestination = "splash" ) {
         composable("home") {
             HomeScreen(viewModel)
         }

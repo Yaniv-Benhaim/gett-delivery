@@ -10,14 +10,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
 import tech.ybenhaim.gettdelivery.ui.components.CircularProgressBar
 import tech.ybenhaim.gettdelivery.ui.components.buttons.GradientButton
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
@@ -33,6 +35,8 @@ import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import timber.log.Timber
 
 
+var didRequestDirections = false
+
 @ExperimentalCoroutinesApi
 @Composable
 fun HomeScreen(viewModel: MainViewModel) {
@@ -44,8 +48,8 @@ fun HomeScreen(viewModel: MainViewModel) {
     val directions by remember { viewModel.directions }
     val currentAzimuth by remember { viewModel.currentAzimuth }
     var gMap: GoogleMap? = null
-    val currentMarker = mutableMapOf<Int, Marker>()
-    var didRequestDirections = false
+
+
     var finishedLoadingMap by remember { mutableStateOf(false) }
 
 
@@ -61,7 +65,7 @@ fun HomeScreen(viewModel: MainViewModel) {
                     .fillMaxSize(),
                 onReady = { map ->
                     gMap = map
-                    setupMap(map, context, viewModel)
+                    setupMap(map, context, viewModel, directions)
                     finishedLoadingMap = true
                 }
             )
@@ -88,28 +92,58 @@ fun HomeScreen(viewModel: MainViewModel) {
 
         //try {
             //Collecting Flow of current location
-            viewModel.getCurrentLocation().collect {
-                Timber.tag("LOCUPDATES").d( "in collect homescreen ${it.last().latitude}")
-                //Setting last current location in viewModel
 
+//        } catch (e: Exception) {
+//            Timber.tag("LOCUPDATES").e("Failed to collect in homescreen line 122 $e")
+//        }
+    }
+}
+
+
+@ExperimentalCoroutinesApi
+private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel, directions: GoogleDirections) {
+    val currentMarker = mutableMapOf<Int, Marker>()
+    map.isBuildingsEnabled = true
+    map.setCustomStyle(context)
+    map.uiSettings.apply {
+        isZoomGesturesEnabled = true
+        isZoomControlsEnabled = false
+        isCompassEnabled = false
+        isMapToolbarEnabled = false
+        isMyLocationButtonEnabled = true
+
+        CoroutineScope(Dispatchers.Main).launch {
+            //Getting location and updating camera and marker
+            viewModel.getCurrentLocation().collect {
+
+                //Setting last current location in viewModel
                 viewModel.currentLocation.value = it.last()
+
                 //Getting directions from last current location to destination
                 if (!didRequestDirections) {
-                    viewModel.getDirections()
+                    viewModel.getDirections().collect { directions ->
+                        Timber.tag("LOCUPDATES").d( "Collected directions status ${directions?.status}")
+                        directions?.let {
+                            viewModel.directions.value = directions
+                        }
+                    }
                     didRequestDirections = true
                 }
                 //Adding directions as polyline to map with extension function
-                gMap?.addPolylinesToMap(directions)
+                map.addPolylinesToMap(viewModel.directions.value)
+
                 //Adding or moving marker of current location
                 if (it.isNotEmpty()) {
                     val location = LatLng(it.last().latitude, it.last().longitude)
-                    gMap?.animateCamera(
+                    map.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             location,
                             MAP_ZOOM
                         )
                     )
-                    gMap?.let { map ->
+                    Timber.tag("LOCUPDATES").d("Homescreen after camera update ")
+
+                    map.let { map ->
                         if (currentMarker[1] == null) {
                             currentMarker[1] = map.addMarker(
                                 MarkerOptions()
@@ -122,26 +156,12 @@ fun HomeScreen(viewModel: MainViewModel) {
                             LatLngInterpolator.Spherical()
                         )
                     }
+
+                } else {
+                    Timber.tag("LOCUPDATES").d("Homescreen list collect is empty")
                 }
             }
-//        } catch (e: Exception) {
-//            Timber.tag("LOCUPDATES").e("Failed to collect in homescreen line 122 $e")
-//        }
+        }
     }
-}
-
-
-private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel) {
-    map.isBuildingsEnabled = true
-    map.setCustomStyle(context)
-    map.uiSettings.apply {
-        isZoomGesturesEnabled = true
-        isZoomControlsEnabled = false
-        isCompassEnabled = false
-        isMapToolbarEnabled = false
-        isMyLocationButtonEnabled = true
-    }
-
-    Log.d("LOCUPDATES", "setupMap Called")
 }
 
