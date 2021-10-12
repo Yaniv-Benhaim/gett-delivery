@@ -31,9 +31,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".service.LocationService"
-            android:enabled="true"
-            android:exported="false"
+            android:name=".service.TrackingService"
             android:foregroundServiceType="location" />
     </application>
 

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Gett Delivery</string>
-    <string name="api_key">AIzaSyAdSzR58qYqKNjDmSzNkH_qTPUMAVDEWWQ</string>
+    <string name="api_key">AIzaSyBrDMz5sY5AG-8hH4HSNY1QwJXJNZE0Qrs</string>
     <string name="launch_activity">Launch activity</string>
     <string name="location_unknown">Location Unknown</string>
     <string name="location_updates_label">Location Updates</string>
@@ -15,6 +15,18 @@
 
     <string name="location_updated">Location Updated: %1$s</string>
 
-    <string name="preference_file_key">com.example.android.while_in_use_location.PREFERENCE_FILE_KEY</string>
+    <string name="preference_file_key">tech.ybenhaim.gettdelivery.while_in_use_location.PREFERENCE_FILE_KEY</string>
     <string name="no_location_text">No current location</string>
+
+    <string name="compass_dial" translatable="false">Compass Dial</string>
+    <string name="compass_hands" translatable="false">Compass Hands</string>
+
+    <string name="sotw_north">N</string>
+    <string name="sotw_east">E</string>
+    <string name="sotw_south">S</string>
+    <string name="sotw_west">W</string>
+    <string name="sotw_northeast">NE</string>
+    <string name="sotw_northwest">NW</string>
+    <string name="sotw_southeast">SE</string>
+    <string name="sotw_southwest">SW</string>
 </resources>

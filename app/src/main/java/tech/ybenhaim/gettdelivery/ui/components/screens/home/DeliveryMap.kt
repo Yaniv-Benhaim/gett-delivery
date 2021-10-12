@@ -7,12 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import java.lang.IllegalStateException
 
 

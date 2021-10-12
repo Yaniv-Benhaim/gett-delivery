@@ -1,21 +1,28 @@
 package tech.ybenhaim.gettdelivery.util
 
 import android.content.Context
+import android.graphics.Color
 import android.location.Location
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.content.edit
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.MapStyleOptions
-import tech.ybenhaim.gettdelivery.R
-
+import com.google.android.gms.maps.model.*
+import tech.ybenhaim.gettdelivery.data.models.Coordinate
+import tech.ybenhaim.gettdelivery.data.models.MyLocation
+import tech.ybenhaim.gettdelivery.data.remote.responses.directions.Directions
+import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
 import timber.log.Timber
 
+//Extension function for adding custom styling to map
 fun GoogleMap.setCustomStyle(context: Context) {
     try {
         val success = this.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
                 context,
-                R.raw.style
+                tech.ybenhaim.gettdelivery.R.raw.style
             )
         )
         if(!success) {
@@ -26,38 +33,31 @@ fun GoogleMap.setCustomStyle(context: Context) {
     }
 }
 
-fun Location?.toText(): String {
-    return if (this != null) {
-        "($latitude, $longitude)"
-    } else {
-        "Unknown location"
+//Extension for adding decoded directions as polyline to map
+fun GoogleMap.addPolylinesToMap(result: GoogleDirections) {
+
+    Handler(Looper.getMainLooper()).post {
+        for (route in result.routes) {
+            val decodedPath: List<Coordinate> = decode(route.overview_polyline.points)
+            val newDecodedPath: MutableList<LatLng> = ArrayList()
+            for (latLng in decodedPath) {
+                newDecodedPath.add(
+                    LatLng(
+                        latLng.latitude,
+                        latLng.longitude
+                    )
+                )
+            }
+            val polyline: Polyline =
+                this.addPolyline(PolylineOptions().addAll(newDecodedPath))
+            polyline.color = Color.parseColor("#8510d8")
+            polyline.isClickable = true
+            polyline.endCap = RoundCap()
+            polyline.startCap = RoundCap()
+            polyline.width = 20f
+        }
     }
 }
 
-internal object SharedPreferenceUtil {
-
-    const val KEY_FOREGROUND_ENABLED = "tracking_foreground_location"
-
-    /**
-     * Returns true if requesting location updates, otherwise returns false.
-     *
-     * @param context The [Context].
-     */
-    fun getLocationTrackingPref(context: Context): Boolean =
-        context.getSharedPreferences(
-            context.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-            .getBoolean(KEY_FOREGROUND_ENABLED, false)
-
-    /**
-     * Stores the location updates state in SharedPreferences.
-     * @param requestingLocationUpdates The location updates state.
-     */
-    fun saveLocationTrackingPref(context: Context, requestingLocationUpdates: Boolean) =
-        context.getSharedPreferences(
-            context.getString(R.string.preference_file_key),
-            Context.MODE_PRIVATE).edit {
-            putBoolean(KEY_FOREGROUND_ENABLED, requestingLocationUpdates)
-        }
-}
 
 
