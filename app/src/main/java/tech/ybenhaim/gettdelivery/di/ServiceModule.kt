@@ -1,19 +1,8 @@
 package tech.ybenhaim.gettdelivery.di
 
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import androidx.core.app.NotificationCompat
-import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ServiceScoped
-import tech.ybenhaim.gettdelivery.MainActivity
-import tech.ybenhaim.gettdelivery.R
-import tech.ybenhaim.gettdelivery.util.Constants
 
 @Module
 @InstallIn(ServiceComponent::class)

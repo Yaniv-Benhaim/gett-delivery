@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tech.ybenhaim.gettdelivery.dataStore
-import tech.ybenhaim.gettdelivery.util.Constants
+import tech.ybenhaim.gettdelivery.data.Constants
 
 fun Context.isFirstRun() : Flow<Boolean> {
     val IS_FIRST_RUN = booleanPreferencesKey(Constants.IS_FIRST_RUN)

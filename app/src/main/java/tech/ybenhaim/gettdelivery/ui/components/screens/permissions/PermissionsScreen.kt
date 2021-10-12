@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import tech.ybenhaim.gettdelivery.MainActivity
 import tech.ybenhaim.gettdelivery.R
-import tech.ybenhaim.gettdelivery.util.TrackingUtility
+import tech.ybenhaim.gettdelivery.util.tracking.TrackingUtility
 
 
 @Composable

@@ -28,10 +28,13 @@ class MainViewModel @Inject constructor(
     ) : ViewModel() {
 
     var navigationRoutes = mutableStateOf(NavigationRoute())
+    var amountOfTasks = mutableStateOf(0)
+    var curTaskNumber = mutableStateOf(0)
     var currentTask = mutableStateOf(NavigationRouteItem(Geo("", 0.0, 0.0), emptyList(), "empty", ""))
+    var lastDeliveryTask = mutableStateOf(NavigationRouteItem(Geo("", 0.0, 0.0), emptyList(), "empty", ""))
+    var isLastTask = mutableStateOf(false)
     var isLoading = mutableStateOf(true)
     var currentLocation = mutableStateOf(MyLocation(latitude = 32.07882010000863, longitude = 34.790416514658150, bearing = 0f, speed = 0f))
-    var currentLocationL = MutableLiveData<MyLocation>()
     val directions = mutableStateOf(GoogleDirections(emptyList(), emptyList(), "empty"))
     val currentAzimuth = mutableStateOf(0.0f)
 
@@ -45,8 +48,11 @@ class MainViewModel @Inject constructor(
     fun loadDeliveryRoute() = viewModelScope.launch {
         isLoading.value = true
         repository.getDeliveryRoute().collect { navRoute ->
-            navRoute.data?.let {
+            amountOfTasks.value = navRoute.data?.size ?: 0
+            lastDeliveryTask.value = navRoute.data?.last() !!
+            navRoute.data.let {
                 navigationRoutes.value = it
+
                 if(currentTask.value.state == "empty") { currentTask.value = it.first() }
                 delay(1000)
                 isLoading.value = false
@@ -57,46 +63,19 @@ class MainViewModel @Inject constructor(
 
     fun getNextTask() {
         viewModelScope.launch {
-            navigationRoutes.value.forEachIndexed { index, navigationRouteItem ->
-                if (currentTask.value == navigationRouteItem) {
-                    currentTask.value = navigationRoutes.value[index.plus(1)]
-                }
+            if(curTaskNumber.value < navigationRoutes.value.size - 1) {
+                curTaskNumber.value = curTaskNumber.value.plus(1)
+                currentTask.value = navigationRoutes.value[curTaskNumber.value]
+            } else {
+                isLastTask.value = true
             }
+            getDirections()
         }
     }
 
-
-    suspend fun getDirections() = repository.getDirections(
+    suspend fun getDirections() =
+        repository.getDirections(
             "${currentLocation.value.latitude},${currentLocation.value.longitude}",
-            currentTask.value.geo.address)
-    }
-
-    fun updateCurrentLocation(newLocation: Location) {
-        if (newLocation.latitude != 0.0) {
-            val updatedLocation = MyLocation(
-                latitude = newLocation.latitude,
-                longitude = newLocation.longitude,
-                bearing = newLocation.bearing,
-                speed = newLocation.speed
-            )
-            //currentLocation.value = updatedLocation
-            //currentLocationL.value = updatedLocation
-        } else {
-            val updatedLocation = MyLocation(
-                latitude = 32.07882010000863,
-                longitude = 34.790416514658150,
-                bearing = newLocation.bearing,
-                speed = newLocation.speed
-            )
-            //currentLocation.value = updatedLocation
-        }
-    }
-
-//    fun updateCurrentRotation(azimuth: Float) {
-//        //currentAzimuth.value = azimuth
-//    }
-
-//    fun currentRotation() = channelFlow {
-//        //send(currentAzimuth.value)
-//    }
+                    currentTask.value.geo.address)
+}
 

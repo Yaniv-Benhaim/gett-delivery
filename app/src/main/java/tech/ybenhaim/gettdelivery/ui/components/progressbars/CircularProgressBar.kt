@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.ui.components
+package tech.ybenhaim.gettdelivery.ui.components.progressbars
 
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable

@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.ui.components.screens.search
+package tech.ybenhaim.gettdelivery.ui.components.screens.history
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

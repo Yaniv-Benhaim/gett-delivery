@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.util
+package tech.ybenhaim.gettdelivery.util.tracking
 
 import android.Manifest
 import android.content.Context

@@ -13,8 +13,8 @@ import tech.ybenhaim.gettdelivery.data.db.LocationDatabase
 import tech.ybenhaim.gettdelivery.data.remote.api.DeliveryApi
 import tech.ybenhaim.gettdelivery.data.remote.api.DirectionsApi
 import tech.ybenhaim.gettdelivery.repository.GettRepository
-import tech.ybenhaim.gettdelivery.util.Constants.BASE_DELIVERY_URL
-import tech.ybenhaim.gettdelivery.util.Constants.BASE_DIRECTIONS_URL
+import tech.ybenhaim.gettdelivery.data.Constants.BASE_DELIVERY_URL
+import tech.ybenhaim.gettdelivery.data.Constants.BASE_DIRECTIONS_URL
 import javax.inject.Singleton
 
 @Module

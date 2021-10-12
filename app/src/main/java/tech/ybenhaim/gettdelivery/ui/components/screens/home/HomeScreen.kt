@@ -1,7 +1,6 @@
 package tech.ybenhaim.gettdelivery.ui.components.screens.home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,7 +9,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -19,39 +18,32 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
-import tech.ybenhaim.gettdelivery.ui.components.CircularProgressBar
+import tech.ybenhaim.gettdelivery.ui.components.progressbars.CircularProgressBar
 import tech.ybenhaim.gettdelivery.ui.components.buttons.GradientButton
+import tech.ybenhaim.gettdelivery.ui.components.info.InfoScreen
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
-import tech.ybenhaim.gettdelivery.util.Constants.MAP_ZOOM
+import tech.ybenhaim.gettdelivery.data.Constants.MAP_ZOOM
 import tech.ybenhaim.gettdelivery.util.addPolylinesToMap
 import tech.ybenhaim.gettdelivery.util.googlemaps.LatLngInterpolator
 import tech.ybenhaim.gettdelivery.util.googlemaps.MarkerAnimation
-import tech.ybenhaim.gettdelivery.util.permissions.getActivity
-import tech.ybenhaim.gettdelivery.util.permissions.isFirstRun
 import tech.ybenhaim.gettdelivery.util.setCustomStyle
 import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import timber.log.Timber
 
 
-var didRequestDirections = false
+
 
 @ExperimentalCoroutinesApi
 @Composable
-fun HomeScreen(viewModel: MainViewModel) {
+fun HomeScreen(viewModel: MainViewModel, navController: NavController) {
 
     val context = LocalContext.current
     val navigationRoute by remember { viewModel.navigationRoutes }
     val currentTask by remember { viewModel.currentTask }
     val isLoading by remember { viewModel.isLoading }
-    val directions by remember { viewModel.directions }
     val currentAzimuth by remember { viewModel.currentAzimuth }
-    var gMap: GoogleMap? = null
-
-
     var finishedLoadingMap by remember { mutableStateOf(false) }
-
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -64,8 +56,7 @@ fun HomeScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .fillMaxSize(),
                 onReady = { map ->
-                    gMap = map
-                    setupMap(map, context, viewModel, directions)
+                    setupMap(map, context, viewModel)
                     finishedLoadingMap = true
                 }
             )
@@ -83,25 +74,27 @@ fun HomeScreen(viewModel: MainViewModel) {
             text = "Arrived",
             textColor = Color.White,
             gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
-            onClick = { viewModel.getNextTask() }
+            onClick = {
+                viewModel.getNextTask()
+                navController.navigate("pickup")
+            }
         )
     }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
 
-
-    LaunchedEffect(key1 = finishedLoadingMap) {
-
-        //try {
-            //Collecting Flow of current location
-
-//        } catch (e: Exception) {
-//            Timber.tag("LOCUPDATES").e("Failed to collect in homescreen line 122 $e")
-//        }
+    ) {
+        InfoScreen(pickupPoint = currentTask.geo.address, currentTask.type)
     }
+
 }
 
 
 @ExperimentalCoroutinesApi
-private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel, directions: GoogleDirections) {
+private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel) {
+    var didRequestDirections = false
     val currentMarker = mutableMapOf<Int, Marker>()
     map.isBuildingsEnabled = true
     map.setCustomStyle(context)

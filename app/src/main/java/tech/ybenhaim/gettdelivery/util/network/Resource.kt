@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.util
+package tech.ybenhaim.gettdelivery.util.network
 
 sealed class Resource<T>(val data: T? = null, message: String? = null) {
 

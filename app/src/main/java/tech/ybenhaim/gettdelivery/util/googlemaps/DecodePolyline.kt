@@ -1,7 +1,6 @@
-package tech.ybenhaim.gettdelivery.util
+package tech.ybenhaim.gettdelivery.util.googlemaps
 
 import tech.ybenhaim.gettdelivery.data.models.Coordinate
-import tech.ybenhaim.gettdelivery.data.remote.responses.deliveries.Geo
 
 fun decode(polyline: String): List<Coordinate> {
     val coordinateChunks: MutableList<MutableList<Int>> = mutableListOf()

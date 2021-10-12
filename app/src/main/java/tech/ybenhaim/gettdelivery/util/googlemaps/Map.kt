@@ -2,18 +2,13 @@ package tech.ybenhaim.gettdelivery.util
 
 import android.content.Context
 import android.graphics.Color
-import android.location.Location
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.core.content.edit
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import tech.ybenhaim.gettdelivery.data.models.Coordinate
-import tech.ybenhaim.gettdelivery.data.models.MyLocation
-import tech.ybenhaim.gettdelivery.data.remote.responses.directions.Directions
 import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
+import tech.ybenhaim.gettdelivery.util.googlemaps.decode
 import timber.log.Timber
 
 //Extension function for adding custom styling to map
