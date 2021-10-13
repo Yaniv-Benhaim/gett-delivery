@@ -15,6 +15,8 @@ import tech.ybenhaim.gettdelivery.data.remote.api.DirectionsApi
 import tech.ybenhaim.gettdelivery.repository.GettRepository
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_DELIVERY_URL
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_DIRECTIONS_URL
+import tech.ybenhaim.gettdelivery.data.Constants.BASE_ROADS_URL
+import tech.ybenhaim.gettdelivery.data.remote.api.RoadsApi
 import javax.inject.Singleton
 
 @Module
@@ -24,8 +26,8 @@ object AppModule {
     @Singleton
     @Provides
     fun providesGettRepository(
-        api: DeliveryApi, directionsApi: DirectionsApi, locationDao: LocationDao
-    ) = GettRepository(api, directionsApi, locationDao)
+        api: DeliveryApi, directionsApi: DirectionsApi, roadsApi: RoadsApi, locationDao: LocationDao
+    ) = GettRepository(api, directionsApi, roadsApi , locationDao)
 
     @Singleton
     @Provides
@@ -45,6 +47,16 @@ object AppModule {
             .baseUrl(BASE_DIRECTIONS_URL)
             .build()
             .create(DirectionsApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRoadsApi(): RoadsApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_ROADS_URL)
+            .build()
+            .create(RoadsApi::class.java)
     }
 
     @Provides

@@ -18,11 +18,4 @@ interface DirectionsApi {
 
     ): Response<GoogleDirections>
 
-    @GET("snapToRoads")
-    suspend fun getSnappedPoints(
-        @Query("path") path: String,
-        @Query("interpolate") interpolate: String,
-        @Query("key") key: String
-
-    ): Response<List<SnappedPoint>>
 }

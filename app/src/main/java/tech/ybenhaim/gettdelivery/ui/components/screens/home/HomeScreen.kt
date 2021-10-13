@@ -120,6 +120,8 @@ private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel,
             //Getting location and updating camera and marker
             if (TrackingUtility.hasLocationPermissions(context) && !needsPermission) {
                 viewModel.getCurrentLocation().collect {
+                    Timber.tag("LOCUPDATES")
+                        .d("Collected snappedPoints ${it.last().latitude}")
 
                     //Setting last current location in viewModel
                     viewModel.currentLocation.value = it.last()

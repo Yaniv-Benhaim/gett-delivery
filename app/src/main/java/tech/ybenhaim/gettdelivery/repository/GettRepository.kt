@@ -12,6 +12,7 @@ import tech.ybenhaim.gettdelivery.data.remote.responses.deliveries.NavigationRou
 import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
 import tech.ybenhaim.gettdelivery.data.Constants.API_KEY
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_DIRECTIONS_URL
+import tech.ybenhaim.gettdelivery.data.remote.api.RoadsApi
 import tech.ybenhaim.gettdelivery.util.network.Resource
 import javax.inject.Inject
 
@@ -19,7 +20,9 @@ import javax.inject.Inject
 class GettRepository @Inject constructor(
     private val deliveryApi: DeliveryApi,
     private val directionsApi: DirectionsApi,
+    private val roadsApi: RoadsApi,
     private val locationDao: LocationDao
+
 ) {
 
     @ExperimentalCoroutinesApi
@@ -57,7 +60,7 @@ class GettRepository @Inject constructor(
             Log.e("MAPURL", "Failed to get directions ${e}")
         }
     }
-    suspend fun getSnappedPoints(path: String) = directionsApi.getSnappedPoints(path, "true", API_KEY)
+    suspend fun getSnappedPoints(path: String) = roadsApi.getSnappedPoints(path, "true", API_KEY)
 
     fun getCurrentLocation() = locationDao.getCurrentLocation()
 
