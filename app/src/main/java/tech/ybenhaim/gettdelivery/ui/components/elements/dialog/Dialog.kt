@@ -1,11 +1,13 @@
-package tech.ybenhaim.gettdelivery.ui.components.dialog
+package tech.ybenhaim.gettdelivery.ui.components.elements.dialog
 
+import android.content.res.Resources
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import tech.ybenhaim.gettdelivery.R
 
 @Composable
 fun DeliveryFinishedDialog(showDialog: Boolean, navController: NavController) {
@@ -16,7 +18,7 @@ fun DeliveryFinishedDialog(showDialog: Boolean, navController: NavController) {
             title = {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Delivery Completed"
+                    text = Resources.getSystem().getString(R.string.delivery_dialog_title)
                 )
             },
             confirmButton = {
@@ -28,7 +30,7 @@ fun DeliveryFinishedDialog(showDialog: Boolean, navController: NavController) {
                 ) {
                     Text(
                         textAlign = TextAlign.Center,
-                        text = "Delivery overview"
+                        text = Resources.getSystem().getString(R.string.delivery_dialog_title)
                     )
                 }
             },
@@ -36,7 +38,7 @@ fun DeliveryFinishedDialog(showDialog: Boolean, navController: NavController) {
             text = {
                 Text(
                     textAlign = TextAlign.Left,
-                    text ="Amazing you have finished all your deliveries for today!"
+                    text = Resources.getSystem().getString(R.string.delivery_dialog_message)
                 )
             },
 

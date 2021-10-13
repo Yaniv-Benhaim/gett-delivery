@@ -13,7 +13,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import java.lang.IllegalStateException
 
-
+/*
+    Screen for setting up the basic GoogleMap
+ */
 @Composable
 fun DeliveryMap(
     modifier: Modifier,

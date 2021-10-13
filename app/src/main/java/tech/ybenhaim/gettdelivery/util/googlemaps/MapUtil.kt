@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.util
+package tech.ybenhaim.gettdelivery.util.googlemaps
 
 import android.content.Context
 import android.graphics.Color
@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
+import tech.ybenhaim.gettdelivery.data.Constants.TAG_GOOGLE_MAPS
 import tech.ybenhaim.gettdelivery.data.models.Coordinate
 import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
 import tech.ybenhaim.gettdelivery.util.googlemaps.decode
@@ -21,10 +22,10 @@ fun GoogleMap.setCustomStyle(context: Context) {
             )
         )
         if(!success) {
-            Timber.d("Failed to set map style")
+            Timber.tag(TAG_GOOGLE_MAPS).e("Did not succeed to set new map style")
         }
     } catch (e: Exception) {
-        Timber.d("STYLING: $e")
+        Timber.tag(TAG_GOOGLE_MAPS).e(e)
     }
 }
 

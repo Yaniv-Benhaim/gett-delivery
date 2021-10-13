@@ -9,6 +9,8 @@ import kotlin.math.sqrt
 
 interface LatLngInterpolator {
 
+    //Interface for interpolating Marker Animation on Google maps
+
     fun interpolate(fraction: Float, a: LatLng?, b: LatLng?): LatLng?
 
     class Spherical : LatLngInterpolator {
@@ -19,6 +21,7 @@ interface LatLngInterpolator {
             toLat: Double,
             toLng: Double
         ): Double {
+
             // Haversine's formula
             val dLat: Double = fromLat - toLat
             val dLng = fromLng - toLng
@@ -31,7 +34,6 @@ interface LatLngInterpolator {
                 )
             )
         }
-
 
         override fun interpolate(fraction: Float, a: LatLng?, b: LatLng?): LatLng? {
             // http://en.wikipedia.org/wiki/Slerp

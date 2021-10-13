@@ -29,4 +29,14 @@
     <string name="sotw_northwest">NW</string>
     <string name="sotw_southeast">SE</string>
     <string name="sotw_southwest">SW</string>
+
+    <string name="delivery_dialog_title">Delivery Completed</string>
+    <string name="delivery_overview">Delivery overview</string>
+    <string name="delivery_dialog_message">Amazing you have finished all your deliveries for today!</string>
+
+    <string name="button_arrived_text">Arrived</string>
+
+
+
+
 </resources>

@@ -7,13 +7,7 @@ import android.os.Build
 import pub.devrel.easypermissions.EasyPermissions
 import tech.ybenhaim.gettdelivery.data.models.MyLocation
 
-fun Location.toMyLocation(): tech.ybenhaim.gettdelivery.data.models.Location {
-    return tech.ybenhaim.gettdelivery.data.models.Location(
-        latitude = this.latitude,
-        longitude = this.longitude,
-        time = 1L
-    )
-}
+//Util for checking permissions
 
 object TrackingUtility {
 

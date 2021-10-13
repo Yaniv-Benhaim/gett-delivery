@@ -1,14 +1,19 @@
 package tech.ybenhaim.gettdelivery.ui.components.screens.home
 
 import android.content.Context
+import android.content.res.Resources
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,19 +23,21 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import tech.ybenhaim.gettdelivery.ui.components.progressbars.CircularProgressBar
-import tech.ybenhaim.gettdelivery.ui.components.buttons.GradientButton
-import tech.ybenhaim.gettdelivery.ui.components.info.InfoScreen
+import tech.ybenhaim.gettdelivery.R
+import tech.ybenhaim.gettdelivery.data.Constants.ARRIVED_BUTTON_TEXT
+import tech.ybenhaim.gettdelivery.ui.components.elements.progressbars.CircularProgressBar
+import tech.ybenhaim.gettdelivery.ui.components.elements.buttons.GradientButton
+import tech.ybenhaim.gettdelivery.ui.components.elements.info.InfoScreen
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
 import tech.ybenhaim.gettdelivery.data.Constants.MAP_ZOOM
-import tech.ybenhaim.gettdelivery.ui.components.dialog.NeedsPermissionsDialog
-import tech.ybenhaim.gettdelivery.ui.theme.DarkYellowGett
-import tech.ybenhaim.gettdelivery.ui.theme.YellowGett
-import tech.ybenhaim.gettdelivery.util.addPolylinesToMap
+import tech.ybenhaim.gettdelivery.data.Constants.PICKUP_SCREEN
+import tech.ybenhaim.gettdelivery.data.Constants.TAG_FLOW_COLLECTION
+import tech.ybenhaim.gettdelivery.ui.components.elements.dialog.NeedsPermissionsDialog
+import tech.ybenhaim.gettdelivery.util.googlemaps.addPolylinesToMap
 import tech.ybenhaim.gettdelivery.util.googlemaps.LatLngInterpolator
 import tech.ybenhaim.gettdelivery.util.googlemaps.MarkerAnimation
-import tech.ybenhaim.gettdelivery.util.setCustomStyle
+import tech.ybenhaim.gettdelivery.util.googlemaps.setCustomStyle
 import tech.ybenhaim.gettdelivery.util.tracking.TrackingUtility
 import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import timber.log.Timber
@@ -50,11 +57,18 @@ fun HomeScreen(viewModel: MainViewModel, navController: NavController) {
     val currentAzimuth by remember { viewModel.currentAzimuth }
     var finishedLoadingMap by remember { mutableStateOf(false) }
 
+    //This if statement refreshes the map if the user accepts location permissions
     if(!showPermissionDialog) {
+
+        //Box that contains the Google Map
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 300.dp)
+                ,
+            contentAlignment = Alignment.TopCenter
         ) {
+
             if(isLoading) {
                 CircularProgressBar(isLoading)
             } else {
@@ -74,37 +88,73 @@ fun HomeScreen(viewModel: MainViewModel, navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .shadow(5.dp),
+            verticalAlignment = Alignment.Top,
 
-        ) {
+
+            ) {
             InfoScreen(pickupPoint = currentTask.geo.address, currentTask.type)
         }
 
+
+
         Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Bottom,
             modifier = Modifier
-                .padding(bottom = 60.dp)
                 .fillMaxSize()
+                .shadow(5.dp),
+            verticalAlignment = Alignment.Bottom
         ) {
-            GradientButton(
-                text = "Arrived",
-                textColor = Color.White,
-                gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
+            HomeBottomView(
                 onClick = {
                     viewModel.getNextTask()
-                    navController.navigate("pickup")
-                }
-            )
+                    navController.navigate(PICKUP_SCREEN)
+
+                })
+        }
+        Row(
+            verticalAlignment = Alignment.Bottom,
+
+            modifier = Modifier
+                .zIndex(10f)
+                .shadow(10.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+
+            CompassArrow(viewModel = viewModel)
         }
 
-        NeedsPermissionsDialog(showDialog = showPermissionDialog, navController = navController)
 
+            
+
+        //If the user did not give permissions this dialog pops up
+        NeedsPermissionsDialog(showDialog = showPermissionDialog, navController = navController)
     }
 }
 
 
+
 @ExperimentalCoroutinesApi
 private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel, needsPermission: Boolean) {
+
+    /*
+        From here we collect multiple streams of data:
+        1 Current location
+        2 Current task
+        3 Current directions to pickup/drop-of points
+
+        Setup Flow:
+        1 Setup basic map features
+        2 Collect current list of user's location
+        3 Collect directions from user's location to destination
+        4 Add directions to map as a poly line from user's location to destination
+        5 Add user's location to map as a marker
+        6 Animate user's location to next location received in flow
+
+        Note!
+        The setup of this map should be separated in to smaller extensions & functions.
+     */
+
+//BASIC MAP SETUP ***********************************************************
     var didRequestDirections = false
     val currentMarker = mutableMapOf<Int, Marker>()
     map.isBuildingsEnabled = true
@@ -115,32 +165,40 @@ private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel,
         isCompassEnabled = false
         isMapToolbarEnabled = false
         isMyLocationButtonEnabled = true
+//END BASIC MAP SETUP *******************************************************
+
+//START COROUTINE TO COLLECT FLOW STREAMS ***********************************
 
         CoroutineScope(Dispatchers.Main).launch {
+
             //Getting location and updating camera and marker
             if (TrackingUtility.hasLocationPermissions(context) && !needsPermission) {
+
+//START COLLECTING CURRENT LOCATION ****************************************
+
                 viewModel.getCurrentLocation().collect {
-                    Timber.tag("LOCUPDATES")
-                        .d("Collected snappedPoints ${it.last().latitude}")
 
                     //Setting last current location in viewModel
                     viewModel.currentLocation.value = it.last()
 
-                    //Getting directions from last current location to destination
+//START COLLECTING CURRENT DIRECTIONS **************************************
+
                     if (!didRequestDirections) {
                         viewModel.getDirections().collect { directions ->
-                            Timber.tag("LOCUPDATES")
-                                .d("Collected directions status ${directions?.status}")
                             directions?.let {
                                 viewModel.directions.value = directions
                             }
                         }
                         didRequestDirections = true
                     }
-                    //Adding directions as polyline to map with extension function
+//END COLLECTING CURRENT DIRECTIONS ****************************************
+
+//ADDING DIRECTIONS TO MAP *************************************************
+
                     map.addPolylinesToMap(viewModel.directions.value)
 
-                    //Adding or moving marker of current location
+//ADDING OR ANIMATING MARKER TO CURRENT LOCATION ***************************
+
                     if (it.isNotEmpty()) {
                         val location = LatLng(it.last().latitude, it.last().longitude)
                         map.animateCamera(
@@ -149,13 +207,12 @@ private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel,
                                 MAP_ZOOM
                             )
                         )
-                        Timber.tag("LOCUPDATES").d("Homescreen after camera update ")
 
                         map.let { map ->
                             if (currentMarker[1] == null) {
                                 currentMarker[1] = map.addMarker(
                                     MarkerOptions()
-                                        .icon(BitmapDescriptorFactory.fromResource(tech.ybenhaim.gettdelivery.R.drawable.ic_location))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location))
                                         .position(location)
                                 )!!
                             } else MarkerAnimation.animateMarkerToGB(
@@ -166,9 +223,11 @@ private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel,
                         }
 
                     } else {
-                        Timber.tag("LOCUPDATES").d("Homescreen list collect is empty")
+                        Timber.tag(TAG_FLOW_COLLECTION).d("Homescreen list collect is empty")
                     }
                 }
+//FINISHED ADDING OR ANIMATING MARKER TO CURRENT LOCATION *********************
+
             } else {
                 viewModel.needsPermission.value = true
             }

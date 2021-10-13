@@ -5,6 +5,10 @@ import tech.ybenhaim.gettdelivery.data.remote.responses.deliveries.NavigationRou
 
 interface DeliveryApi {
 
+/*
+    Interface for receiving available tasks.
+    For realistic simulation purposes upload the journey.json file to http://gamedev-il.tech/journey.json
+*/
     @GET("journey.json")
     suspend fun getDeliveryRoute() : NavigationRoute
 }

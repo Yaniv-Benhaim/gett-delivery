@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.data.remote.responses.directions.roads
+package tech.ybenhaim.gettdelivery.data.remote.responses.roads
 
 data class SnappedPoint(
     val location: Location,

@@ -18,12 +18,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import tech.ybenhaim.gettdelivery.MainActivity
 import tech.ybenhaim.gettdelivery.R
 import tech.ybenhaim.gettdelivery.util.tracking.TrackingUtility
 
 
+@ExperimentalCoroutinesApi
 @Composable
 fun PermissionsScreen(navController: NavController) {
     val activity = LocalContext.current as MainActivity

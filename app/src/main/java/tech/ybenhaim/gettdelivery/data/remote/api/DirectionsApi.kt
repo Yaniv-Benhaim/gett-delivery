@@ -1,14 +1,15 @@
 package tech.ybenhaim.gettdelivery.data.remote.api
 
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
-import tech.ybenhaim.gettdelivery.data.remote.responses.directions.Directions
 import tech.ybenhaim.gettdelivery.data.remote.responses.directions.GoogleDirections
-import tech.ybenhaim.gettdelivery.data.remote.responses.directions.roads.SnappedPoint
 
 interface DirectionsApi {
+
+/*
+    Interface for receiving directions to next pickup/drop-off point from the Google Directions Api.
+*/
 
     @GET("json")
     suspend fun getDirections(

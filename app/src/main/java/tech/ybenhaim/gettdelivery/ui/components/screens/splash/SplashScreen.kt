@@ -17,9 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import tech.ybenhaim.gettdelivery.R
-import tech.ybenhaim.gettdelivery.util.permissions.isFirstRun
+
 
 @Composable
 fun SplashScreen(navController: NavController) {

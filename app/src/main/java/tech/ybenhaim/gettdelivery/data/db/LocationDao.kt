@@ -8,10 +8,16 @@ import tech.ybenhaim.gettdelivery.data.models.MyLocation
 @Dao
 interface LocationDao {
 
+    /*
+    This interface is used to store Location Points received from -
+    Tracking Service & release them as a flow for easy collection
+     */
+
+    //Added the Delete locations within this function to keep the database small
     @Transaction
     suspend fun updateLocation(location: MyLocation) {
         location.let {
-            deleteLocations() // This deletes previous locations to keep the database small. If you want to store a full location history, remove this line.
+            deleteLocations()
             insertLocation(it)
         }
     }
@@ -29,7 +35,6 @@ interface LocationDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNavigationItem(navRoute: MyLocation)
-
 
     @Query("SELECT * FROM nav_items ORDER BY id")
     fun getCurrentLocation(): Flow<List<MyLocation>>

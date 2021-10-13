@@ -34,6 +34,7 @@ object Constants {
     const val NAVIGATE_TO_DROP_OFF = "navigate_to_drop_off"
     const val DROP_OFF_PARCELS = "drop_off"
     const val FINISHED_TASKS = "Amazing you delivered everything"
+    const val ARRIVED_BUTTON_TEXT = "Arrived"
 
     const val NAVIGATE_TO_PICKUP_TITLE = "Navigate to pickup"
     const val PICKUP_PARCELS_TITLE = "Pickup"
@@ -42,6 +43,24 @@ object Constants {
 
     const val PARCELS_TO_COLLECT = " Parcels to collect"
     const val PARCELS_TO_DELIVER = " Parcels to deliver"
+
+    //Debug tags
+    const val TAG_DELIVERY = "DELIVERY"
+    const val TAG_LOCATION_TRACKING = "DELIVERY"
+    const val TAG_NETWORK_REQUESTS = "NETWORK_REQUESTS"
+    const val TAG_FLOW_COLLECTION = "FLOW_COLLECTION"
+    const val TAG_FLOW_EMISSION = "FLOW_EMISSION"
+    const val TAG_GOOGLE_MAPS = "TAG_GOOGLE_MAPS"
+
+    //Navigation routes
+    const val SPLASH_SCREEN = "splash"
+    const val HOME_SCREEN = "home"
+    const val PROFILE_SCREEN = "profile"
+    const val SETTINGS_SCREEN = "settings"
+    const val PERMISSIONS_SCREEN = "permissions"
+    const val PICKUP_SCREEN = "pickup"
+    const val HISTORY_SCREEN = "history"
+
 
 
 }

@@ -16,6 +16,7 @@ import tech.ybenhaim.gettdelivery.repository.GettRepository
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_DELIVERY_URL
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_DIRECTIONS_URL
 import tech.ybenhaim.gettdelivery.data.Constants.BASE_ROADS_URL
+import tech.ybenhaim.gettdelivery.data.db.HistoryDao
 import tech.ybenhaim.gettdelivery.data.remote.api.RoadsApi
 import javax.inject.Singleton
 
@@ -23,11 +24,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+/*
+   Module for dependency injecting:
+   1 Repository
+   2 Directions Api
+   3 Roads Api
+   4 Room database
+   5 database Api
+*/
+
     @Singleton
     @Provides
     fun providesGettRepository(
-        api: DeliveryApi, directionsApi: DirectionsApi, roadsApi: RoadsApi, locationDao: LocationDao
-    ) = GettRepository(api, directionsApi, roadsApi , locationDao)
+        api: DeliveryApi, directionsApi: DirectionsApi, roadsApi: RoadsApi, locationDao: LocationDao, historyDao: HistoryDao
+    ) = GettRepository(api, directionsApi, roadsApi , locationDao, historyDao)
 
     @Singleton
     @Provides
@@ -67,6 +77,11 @@ object AppModule {
     @Provides
     fun provideDao(database: LocationDatabase): LocationDao {
         return database.locationDao()
+    }
+
+    @Provides
+    fun provideHistoryDao(database: LocationDatabase): HistoryDao {
+        return database.historyDao()
     }
 
 }

@@ -6,18 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.core.app.ActivityCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,23 +24,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import tech.ybenhaim.gettdelivery.data.Constants.ACTION_PAUSE_SERVICE
+import tech.ybenhaim.gettdelivery.data.Constants.ACTION_START_OR_RESUME_SERVICE
+import tech.ybenhaim.gettdelivery.data.Constants.ACTION_STOP_SERVICE
+import tech.ybenhaim.gettdelivery.data.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import tech.ybenhaim.gettdelivery.data.models.BottomNavItem
 import tech.ybenhaim.gettdelivery.repository.GettRepository
 import tech.ybenhaim.gettdelivery.service.TrackingService
 import tech.ybenhaim.gettdelivery.ui.components.navigation.BottomNavBar
 import tech.ybenhaim.gettdelivery.ui.components.navigation.Navigation
 import tech.ybenhaim.gettdelivery.ui.theme.GettDeliveryTheme
-import tech.ybenhaim.gettdelivery.data.Constants.ACTION_PAUSE_SERVICE
-import tech.ybenhaim.gettdelivery.data.Constants.ACTION_START_OR_RESUME_SERVICE
-import tech.ybenhaim.gettdelivery.data.Constants.ACTION_STOP_SERVICE
-import tech.ybenhaim.gettdelivery.data.Constants.IS_FIRST_RUN
-import tech.ybenhaim.gettdelivery.data.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import tech.ybenhaim.gettdelivery.util.compass.Compass
 import tech.ybenhaim.gettdelivery.util.tracking.TrackingUtility
 import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import javax.inject.Inject
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = IS_FIRST_RUN)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
@@ -118,8 +114,7 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
     private fun getCompassListener(): Compass.CompassListener {
         return object : Compass.CompassListener {
             override fun onNewAzimuth(azimuth: Float) {
-                //viewModel.updateCurrentRotation(azimuth)
-                Log.d("COMPASS", "azimuth: $azimuth")
+                viewModel.currentAzimuth.value = azimuth.toInt()
             }
         }
     }

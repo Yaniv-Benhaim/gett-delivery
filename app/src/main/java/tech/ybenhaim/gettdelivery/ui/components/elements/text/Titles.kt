@@ -1,4 +1,4 @@
-package tech.ybenhaim.gettdelivery.ui.components.text
+package tech.ybenhaim.gettdelivery.ui.components.elements.text
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
