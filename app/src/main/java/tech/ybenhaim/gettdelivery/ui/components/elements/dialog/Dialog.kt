@@ -18,27 +18,15 @@ fun DeliveryFinishedDialog(showDialog: Boolean, navController: NavController) {
             title = {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = Resources.getSystem().getString(R.string.delivery_dialog_title)
+                    text = "Delivery completed"
                 )
             },
-            confirmButton = {
-                Button(
-                    onClick = {
-                       navController.navigate("history")
-                    },
-
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = Resources.getSystem().getString(R.string.delivery_dialog_title)
-                    )
-                }
-            },
+            confirmButton = {},
             dismissButton = {},
             text = {
                 Text(
                     textAlign = TextAlign.Left,
-                    text = Resources.getSystem().getString(R.string.delivery_dialog_message)
+                    text = "Amazing you have finished all your deliveries for today!"
                 )
             },
 

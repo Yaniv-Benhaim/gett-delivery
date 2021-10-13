@@ -13,10 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import tech.ybenhaim.gettdelivery.data.Constants
 import tech.ybenhaim.gettdelivery.data.Constants.PARCELS_TO_COLLECT
 import tech.ybenhaim.gettdelivery.data.Constants.PARCELS_TO_DELIVER
 import tech.ybenhaim.gettdelivery.data.Constants.PICKUP_PARCELS
 import tech.ybenhaim.gettdelivery.ui.components.elements.buttons.GradientButton
+import tech.ybenhaim.gettdelivery.ui.components.elements.buttons.WhiteShadowButton
 import tech.ybenhaim.gettdelivery.ui.components.elements.dialog.DeliveryFinishedDialog
 import tech.ybenhaim.gettdelivery.ui.components.elements.text.CenteredTitle
 import tech.ybenhaim.gettdelivery.ui.components.elements.text.LeftTitle
@@ -86,6 +88,19 @@ fun PickupScreen(viewModel: MainViewModel, navController: NavHostController) {
                     viewModel.isLastTask.value = true
                 }
             }
+        )
+        WhiteShadowButton(
+            text = "Done",
+            textColor = Color.White,
+            gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
+            onClick = {
+                if(currentTask != viewModel.lastDeliveryTask.value) {
+                    navController.navigate("home")
+                    viewModel.getNextTask()
+                } else {
+                    viewModel.isLastTask.value = true
+                }
+            },
         )
     }
 

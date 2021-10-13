@@ -32,6 +32,7 @@ class MainViewModel @Inject constructor(
     var navigationRoutes = mutableStateOf(NavigationRoute())
     private var amountOfTasks = mutableStateOf(0)
     private var curTaskNumber = mutableStateOf(0)
+    var currentHistory = mutableStateOf(History(parcels_delivered = 6, average_parcels_per_day = 6, kilometers_travelled = 42))
 
     var isLastTask = mutableStateOf(false)
     var isLoading = mutableStateOf(true)
@@ -179,5 +180,10 @@ class MainViewModel @Inject constructor(
             currentTask.value.geo.address)
 
 
+    fun getHistory() = viewModelScope.launch {
+        repository.getCurrentHistory().collect {
+
+        }
+    }
 }
 

@@ -63,39 +63,7 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
         setContent {
             GettDeliveryTheme {
                 val navController = rememberNavController()
-
-                Scaffold(
-                    bottomBar = {
-                        BottomNavBar(
-                            items = listOf(
-                                BottomNavItem(
-                                    name = "Home",
-                                    route = "home",
-                                    icon = Icons.Outlined.Home
-                                ),
-                                BottomNavItem(
-                                    name = "History",
-                                    route = "history",
-                                    icon = Icons.Outlined.List
-                                ),
-                                BottomNavItem(
-                                    name = "Profile",
-                                    route = "profile",
-                                    icon = Icons.Outlined.Person
-                                ),
-                                BottomNavItem(
-                                    name = "Settings",
-                                    route = "settings",
-                                    icon = Icons.Outlined.Settings
-                                ),
-                            ),
-                            navController = navController,
-                            onItemClick = {
-                                navController.navigate(it.route)
-                            }
-                        )
-                    }
-                ) {
+                Scaffold() {
                     Navigation(navController = navController, viewModel)
                 }
             }
