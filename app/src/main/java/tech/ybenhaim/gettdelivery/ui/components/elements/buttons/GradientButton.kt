@@ -70,7 +70,7 @@ fun WhiteShadowButton(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(gradient)
                 .padding(horizontal = 50.dp, vertical = 10.dp)
                 .height(40.dp),
             contentAlignment = Alignment.Center

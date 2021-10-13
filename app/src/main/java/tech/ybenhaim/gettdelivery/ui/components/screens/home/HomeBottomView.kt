@@ -26,6 +26,8 @@ import tech.ybenhaim.gettdelivery.data.Constants
 import tech.ybenhaim.gettdelivery.ui.components.elements.buttons.WhiteShadowButton
 import tech.ybenhaim.gettdelivery.ui.components.elements.text.LeftTitle
 import tech.ybenhaim.gettdelivery.ui.theme.GreyExtraLight
+import tech.ybenhaim.gettdelivery.ui.theme.Purple500
+import tech.ybenhaim.gettdelivery.ui.theme.Purple700
 
 @Composable
 fun HomeBottomView(onClick: () -> Unit) {
@@ -102,8 +104,8 @@ fun HomeBottomView(onClick: () -> Unit) {
 
                 WhiteShadowButton(
                     text = Constants.ARRIVED_BUTTON_TEXT,
-                    textColor = Color.Black,
-                    gradient =  Brush.horizontalGradient(listOf(Color.White, Color.White)),
+                    textColor = Color.White,
+                    gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
                     onClick = onClick,
                 )
 

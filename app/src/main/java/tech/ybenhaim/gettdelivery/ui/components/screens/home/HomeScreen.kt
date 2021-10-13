@@ -111,17 +111,27 @@ fun HomeScreen(viewModel: MainViewModel, navController: NavController) {
 
                 })
         }
-        Row(
-            verticalAlignment = Alignment.Bottom,
-
-            modifier = Modifier
-                .zIndex(10f)
-                .shadow(10.dp),
-            horizontalArrangement = Arrangement.End
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 110.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.End
         ) {
 
-            CompassArrow(viewModel = viewModel)
+
+
+            Row(
+                Modifier.padding(end = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+
+                CompassArrow(viewModel = viewModel)
+            }
         }
+
+
+
 
 
             
