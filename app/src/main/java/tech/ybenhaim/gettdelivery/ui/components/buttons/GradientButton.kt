@@ -14,8 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import tech.ybenhaim.gettdelivery.ui.theme.DarkYellowGett
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
+import tech.ybenhaim.gettdelivery.ui.theme.YellowGett
 
 @Composable
 fun GradientButton(
@@ -24,7 +26,6 @@ fun GradientButton(
     gradient: Brush,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Button(
         colors = ButtonDefaults.buttonColors(
            backgroundColor = Color.Transparent
@@ -54,7 +55,7 @@ fun GradientPreview() {
         text = "Arrived",
         textColor = Color.White,
         gradient = Brush.horizontalGradient(
-            colors = listOf(Purple700, Purple500)
+            colors = listOf(YellowGett, DarkYellowGett)
         )
     ) {
         

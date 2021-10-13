@@ -57,6 +57,9 @@ class GettRepository @Inject constructor(
             Log.e("MAPURL", "Failed to get directions ${e}")
         }
     }
+    suspend fun getSnappedPoints(path: String) = directionsApi.getSnappedPoints(path, "true", API_KEY)
 
     fun getCurrentLocation() = locationDao.getCurrentLocation()
+
+
 }

@@ -1,11 +1,9 @@
 package tech.ybenhaim.gettdelivery.ui.components.text
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,24 +20,24 @@ import tech.ybenhaim.gettdelivery.ui.theme.Purple700
 
 @Composable
 fun CenteredTitle(title: String) {
-    Box(
-        contentAlignment = Alignment.TopCenter,
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(Brush.horizontalGradient(listOf(Purple700, Purple500)))
-            .clip(RoundedCornerShape(25.dp))
-            .padding(horizontal = 6.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        backgroundColor = Color.Transparent
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .background(Brush.horizontalGradient(listOf(Purple700, Purple500)))
+                .fillMaxWidth()
         ) {
             Text(
                 text = title,
                 maxLines = 1,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier.padding(12.dp)
             )
            
         }
@@ -75,6 +73,6 @@ fun LeftTitle(title: String) {
 @Preview
 @Composable
 fun PrevTitle() {
-    LeftTitle(title = "Parcels to collect")
+    CenteredTitle(title = "Parcels to collect")
     
 }

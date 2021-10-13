@@ -51,6 +51,7 @@ class TrackingService : LifecycleService() {
     var isFirstRun = true
     var serviceKilled = false
 
+
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     companion object {
@@ -147,7 +148,6 @@ class TrackingService : LifecycleService() {
                         )
                         lifecycleScope.launch {
                             locationDao.insertLocation(currentLocation)
-                           // Timber.tag("LOCUPDATES").d( "location from service: ${location.latitude}")
                         }
                     }
                 }

@@ -25,6 +25,8 @@ import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
 import tech.ybenhaim.gettdelivery.data.Constants.MAP_ZOOM
 import tech.ybenhaim.gettdelivery.ui.components.dialog.NeedsPermissionsDialog
+import tech.ybenhaim.gettdelivery.ui.theme.DarkYellowGett
+import tech.ybenhaim.gettdelivery.ui.theme.YellowGett
 import tech.ybenhaim.gettdelivery.util.addPolylinesToMap
 import tech.ybenhaim.gettdelivery.util.googlemaps.LatLngInterpolator
 import tech.ybenhaim.gettdelivery.util.googlemaps.MarkerAnimation

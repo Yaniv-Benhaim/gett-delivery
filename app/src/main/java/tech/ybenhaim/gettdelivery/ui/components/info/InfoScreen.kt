@@ -6,7 +6,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,26 +27,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import tech.ybenhaim.gettdelivery.R
+import tech.ybenhaim.gettdelivery.ui.theme.DarkYellowGett
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
+import tech.ybenhaim.gettdelivery.ui.theme.YellowGett
 import tech.ybenhaim.gettdelivery.util.deliveries.getTaskTitle
 
 
 @Composable
 fun InfoScreen(pickupPoint: String, task: String) {
 
-    Box(
-        contentAlignment = Alignment.TopStart,
+    Card(
+
         modifier = androidx.compose.ui.Modifier
-            .fillMaxWidth()
-            .background(Brush.horizontalGradient(listOf(Purple700, Purple500)))
-            .clip(RoundedCornerShape(25.dp))
-            .padding(horizontal = 6.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp)
+
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .fillMaxWidth()
+                .background(Brush.horizontalGradient(listOf(Purple700, Purple500)))
+                .padding(12.dp)
+
         ) {
+            Spacer(modifier = Modifier.padding(vertical = 5.dp))
             Text(
                 text = task.getTaskTitle(),
                 maxLines = 1,
@@ -60,6 +67,7 @@ fun InfoScreen(pickupPoint: String, task: String) {
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
+            Spacer(modifier = Modifier.padding(vertical = 5.dp))
         }
 
     }
