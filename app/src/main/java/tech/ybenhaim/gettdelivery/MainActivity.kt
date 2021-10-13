@@ -13,16 +13,17 @@ import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.*
+import androidx.core.app.ActivityCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import tech.ybenhaim.gettdelivery.data.models.BottomNavItem
@@ -77,9 +78,9 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
                                     icon = Icons.Outlined.Home
                                 ),
                                 BottomNavItem(
-                                    name = "Search",
-                                    route = "search",
-                                    icon = Icons.Outlined.Search
+                                    name = "History",
+                                    route = "history",
+                                    icon = Icons.Outlined.List
                                 ),
                                 BottomNavItem(
                                     name = "Profile",
@@ -134,16 +135,18 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
     }
 
 
+    @ExperimentalCoroutinesApi
     fun requestPermissions() {
 
         if(TrackingUtility.hasLocationPermissions(this)) {
             sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+            viewModel.needsPermission.value = false
             return
         }
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             EasyPermissions.requestPermissions(
                 this,
-                "This app can't function correctly without location permissions :(",
+                "This app can't function correctly without location permissions",
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -151,11 +154,10 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
         } else {
             EasyPermissions.requestPermissions(
                 this,
-                "This app can't function correctly without location permissions :(",
+                "This app can't function correctly without location permissions",
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
         }
     }
@@ -168,7 +170,13 @@ class MainActivity : ComponentActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+    @ExperimentalCoroutinesApi
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+        lifecycleScope.launch {
+            delay(2000)
+            viewModel.needsPermission.value = false
+        }
     }
 
     override fun onRequestPermissionsResult(

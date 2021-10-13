@@ -24,10 +24,12 @@ import tech.ybenhaim.gettdelivery.ui.components.info.InfoScreen
 import tech.ybenhaim.gettdelivery.ui.theme.Purple500
 import tech.ybenhaim.gettdelivery.ui.theme.Purple700
 import tech.ybenhaim.gettdelivery.data.Constants.MAP_ZOOM
+import tech.ybenhaim.gettdelivery.ui.components.dialog.NeedsPermissionsDialog
 import tech.ybenhaim.gettdelivery.util.addPolylinesToMap
 import tech.ybenhaim.gettdelivery.util.googlemaps.LatLngInterpolator
 import tech.ybenhaim.gettdelivery.util.googlemaps.MarkerAnimation
 import tech.ybenhaim.gettdelivery.util.setCustomStyle
+import tech.ybenhaim.gettdelivery.util.tracking.TrackingUtility
 import tech.ybenhaim.gettdelivery.viewmodels.MainViewModel
 import timber.log.Timber
 
@@ -42,58 +44,65 @@ fun HomeScreen(viewModel: MainViewModel, navController: NavController) {
     val navigationRoute by remember { viewModel.navigationRoutes }
     val currentTask by remember { viewModel.currentTask }
     val isLoading by remember { viewModel.isLoading }
+    var showPermissionDialog by remember { viewModel.needsPermission }
     val currentAzimuth by remember { viewModel.currentAzimuth }
     var finishedLoadingMap by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if(isLoading) {
-            CircularProgressBar(isLoading)
-        } else {
-            DeliveryMap(
-                modifier = Modifier
-                    .fillMaxSize(),
-                onReady = { map ->
-                    setupMap(map, context, viewModel)
-                    finishedLoadingMap = true
+    if(!showPermissionDialog) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if(isLoading) {
+                CircularProgressBar(isLoading)
+            } else {
+                DeliveryMap(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    onReady = { map ->
+                        setupMap(map, context, viewModel, showPermissionDialog)
+                        finishedLoadingMap = true
+                    },
+                    reload = showPermissionDialog
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+
+        ) {
+            InfoScreen(pickupPoint = currentTask.geo.address, currentTask.type)
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier
+                .padding(bottom = 60.dp)
+                .fillMaxSize()
+        ) {
+            GradientButton(
+                text = "Arrived",
+                textColor = Color.White,
+                gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
+                onClick = {
+                    viewModel.getNextTask()
+                    navController.navigate("pickup")
                 }
             )
         }
-    }
 
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-            .padding(bottom = 60.dp)
-            .fillMaxSize()
-    ) {
-        GradientButton(
-            text = "Arrived",
-            textColor = Color.White,
-            gradient =  Brush.horizontalGradient(listOf(Purple700, Purple500)),
-            onClick = {
-                viewModel.getNextTask()
-                navController.navigate("pickup")
-            }
-        )
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+        NeedsPermissionsDialog(showDialog = showPermissionDialog, navController = navController)
 
-    ) {
-        InfoScreen(pickupPoint = currentTask.geo.address, currentTask.type)
     }
-
 }
 
 
 @ExperimentalCoroutinesApi
-private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel) {
+private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel, needsPermission: Boolean) {
     var didRequestDirections = false
     val currentMarker = mutableMapOf<Int, Marker>()
     map.isBuildingsEnabled = true
@@ -107,52 +116,57 @@ private fun setupMap(map: GoogleMap, context: Context, viewModel: MainViewModel)
 
         CoroutineScope(Dispatchers.Main).launch {
             //Getting location and updating camera and marker
-            viewModel.getCurrentLocation().collect {
+            if (TrackingUtility.hasLocationPermissions(context) && !needsPermission) {
+                viewModel.getCurrentLocation().collect {
 
-                //Setting last current location in viewModel
-                viewModel.currentLocation.value = it.last()
+                    //Setting last current location in viewModel
+                    viewModel.currentLocation.value = it.last()
 
-                //Getting directions from last current location to destination
-                if (!didRequestDirections) {
-                    viewModel.getDirections().collect { directions ->
-                        Timber.tag("LOCUPDATES").d( "Collected directions status ${directions?.status}")
-                        directions?.let {
-                            viewModel.directions.value = directions
+                    //Getting directions from last current location to destination
+                    if (!didRequestDirections) {
+                        viewModel.getDirections().collect { directions ->
+                            Timber.tag("LOCUPDATES")
+                                .d("Collected directions status ${directions?.status}")
+                            directions?.let {
+                                viewModel.directions.value = directions
+                            }
                         }
+                        didRequestDirections = true
                     }
-                    didRequestDirections = true
-                }
-                //Adding directions as polyline to map with extension function
-                map.addPolylinesToMap(viewModel.directions.value)
+                    //Adding directions as polyline to map with extension function
+                    map.addPolylinesToMap(viewModel.directions.value)
 
-                //Adding or moving marker of current location
-                if (it.isNotEmpty()) {
-                    val location = LatLng(it.last().latitude, it.last().longitude)
-                    map.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            location,
-                            MAP_ZOOM
+                    //Adding or moving marker of current location
+                    if (it.isNotEmpty()) {
+                        val location = LatLng(it.last().latitude, it.last().longitude)
+                        map.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                location,
+                                MAP_ZOOM
+                            )
                         )
-                    )
-                    Timber.tag("LOCUPDATES").d("Homescreen after camera update ")
+                        Timber.tag("LOCUPDATES").d("Homescreen after camera update ")
 
-                    map.let { map ->
-                        if (currentMarker[1] == null) {
-                            currentMarker[1] = map.addMarker(
-                                MarkerOptions()
-                                    .icon(BitmapDescriptorFactory.fromResource(tech.ybenhaim.gettdelivery.R.drawable.ic_location))
-                                    .position(location)
-                            )!!
-                        } else MarkerAnimation.animateMarkerToGB(
-                            currentMarker[1]!!,
-                            location,
-                            LatLngInterpolator.Spherical()
-                        )
+                        map.let { map ->
+                            if (currentMarker[1] == null) {
+                                currentMarker[1] = map.addMarker(
+                                    MarkerOptions()
+                                        .icon(BitmapDescriptorFactory.fromResource(tech.ybenhaim.gettdelivery.R.drawable.ic_location))
+                                        .position(location)
+                                )!!
+                            } else MarkerAnimation.animateMarkerToGB(
+                                currentMarker[1]!!,
+                                location,
+                                LatLngInterpolator.Spherical()
+                            )
+                        }
+
+                    } else {
+                        Timber.tag("LOCUPDATES").d("Homescreen list collect is empty")
                     }
-
-                } else {
-                    Timber.tag("LOCUPDATES").d("Homescreen list collect is empty")
                 }
+            } else {
+                viewModel.needsPermission.value = true
             }
         }
     }

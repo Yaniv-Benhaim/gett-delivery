@@ -41,7 +41,7 @@ object Constants {
     const val DROP_OFF_PARCELS_TITLE = "Drop off"
 
     const val PARCELS_TO_COLLECT = " Parcels to collect"
-    const val PARCELS_TO_DELIVER = " Parcels to collect"
+    const val PARCELS_TO_DELIVER = " Parcels to deliver"
 
 
 }

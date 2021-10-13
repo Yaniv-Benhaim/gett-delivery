@@ -37,6 +37,7 @@ class MainViewModel @Inject constructor(
     var currentLocation = mutableStateOf(MyLocation(latitude = 32.07882010000863, longitude = 34.790416514658150, bearing = 0f, speed = 0f))
     val directions = mutableStateOf(GoogleDirections(emptyList(), emptyList(), "empty"))
     val currentAzimuth = mutableStateOf(0.0f)
+    var needsPermission = mutableStateOf(false)
 
     init {
        loadDeliveryRoute()

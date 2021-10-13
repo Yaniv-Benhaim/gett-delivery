@@ -17,7 +17,8 @@ import java.lang.IllegalStateException
 @Composable
 fun DeliveryMap(
     modifier: Modifier,
-    onReady:(GoogleMap) -> Unit
+    onReady:(GoogleMap) -> Unit,
+    reload: Boolean
 ){
 
     val context = LocalContext.current
