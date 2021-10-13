@@ -6,6 +6,8 @@ The reason the project has a lot more ui components & screens within the ui/comp
 because i made the project a lot bigger from the beginning but in the end made it just to fit the requirements
 or else it would have been harder to complete in time.
 
+# The api key is located in the constants file and the strings file. Normally this would of course be in a more secure location
+
 Time to build: -> Around 10 hours, tried to implement a lot more screens including bottom navigation but found myself short on time.
 Technologies used:
 1. Jetpack compose
